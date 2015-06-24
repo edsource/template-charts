@@ -1,47 +1,23 @@
-<style>
-
-.bar {
-  fill: #66c2a5;
-}
-
-
-.axis {
-  font: 10px sans-serif;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.x.axis path {
-  display: none;
-}
-
-.bar-contain {width:600px;}
-
-.bar {padding:0}
-
-text {font-family:'roboto condensed',helvetica,san-serif;font-size:1.1em;}
-
-section>.hed h1 {font-size:2em;font-family: "Roboto Condensed";font-weight:700;color:#333;margin:0;}
-
-.thick {background:#aaa;height:2px;border:none;}
-
-</style>
-<section class="bar-contain">
-	<div class="hed"><h1>Funding for Local Control Funding Formula</h1><p>In 2013, the Legislature passed the Local Control Funding Formula, a new system for education financing that provides uniform base funding per student while channeling extra dollars to districts based on enrollment of English learners, low-income children and foster youths. The Legislature projected it would take eight years to phase in the new formula. 2012-13 was the final year under the old system, 2013-14 the first year under the formula. Although robust revenues put the funding ahead of schedule in 2015-16, the Department of Finance is sticking with its projection of full funding &mdash; the completion of the transition period &mdash; in 2020-21.</p> </div>
+<section class="bar-contain ed-chart">
+	<div class="hed"><h1>Funding for Local Control Funding Formula</h1><p>In 2013, the Legislature passed the Local Control Funding Formula, a new system for education financing that provides uniform base funding per student while channeling extra dollars to districts based on enrollment of English learners, low-income children and foster youths. The Legislature projected it would take eight years to phase in the new formula. 2013-14 was the first year under the formula. Although robust revenues put the funding ahead of schedule in FY 2015-16, the Department of Finance is sticking with its projection of full funding &mdash; the completion of the transition period &mdash; in FY 2020-21.</p> </div>
 
 	<hr class="thick">
-
+	<div class="legend">
+		<div><div class="legend-box four back"></div><p>Old System of Funding</p></div>	
+		<div><div class="legend-box one back"></div><p>LCFF System of Funding</p></div>	
+	</div>
 	<div id="lcff-bar"></div>
 </section>
 
-	
+<section class="pie-contain ed-chart">
+	<div class="hed"><h1>Propostion 98 in 2015-16</h1><p>Proposition 98, which voters passed in 1988, determines the proportion of state revenues that must go to K-12 schools and community colleges. Here is how the money will be divided. </p> </div>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
-<script type="text/javascript" src="http://edsource.org/wp-content/js/colorbrewer.js"></script>
-<script type="text/javascript" src="js/column.js"></script>
+	<hr class="thick">
+
+	<div class="legend">
+			<div><div class="legend-box one back"></div><p>K-12</p></div>	
+			<div><div class="legend-box two back"></div><p>Preschool</p></div>	
+			<div><div class="legend-box three back"></div><p>Community College</p></div>	
+		</div>
+	<div id="prop-pie"></div>
+</section>

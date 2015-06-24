@@ -30,7 +30,7 @@ var columnChart = {
 		// CHART
 		var chart = d3.select(p.contain).append("svg").attr("width", p.w + p.m[3] + p.m[1]).attr("height", p.h + p.m[0] + p.m[2]).append("g").attr("transform", "translate(" + p.m[3] + "," + p.m[0] + ")");
 
-		d3.tsv(p.path, columnChart.type, function(error, data) {
+		d3.tsv(p.path + '.tsv', columnChart.type, function(error, data) {
 
 			// MAP DOMAINS
 			x.domain(data.map(function(d) { return d.xaxis; }));
@@ -39,12 +39,14 @@ var columnChart = {
 			// AXES
 			var xAxis = d3.svg.axis().scale(x).orient("bottom");
 			var yAxis = d3.svg.axis().scale(y).orient("left").tickFormat(columnChart.tickFormat(p.tickFormat)).ticks(p.ticks);
-			chart.append("g").attr("class", "x axis").attr("transform", "translate(0," + p.h + ")").call(xAxis);
-			chart.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text(p.yaxisLabel);
-
+			
 			// DRAW CHART
-			chart.selectAll(".bar").data(data).enter().append("rect").attr("class", "bar").attr("x", function(d) { return x(d.xaxis); }).attr("width", x.rangeBand()).attr("y", function(d) { return y(d.yaxis); }).attr("height", function(d) { return p.h - y(d.yaxis); });
+			var bar = chart.selectAll("g").data(data).enter().append("g");
+				bar.append("rect").attr("class", "bar").attr("x", function(d) { return x(d.xaxis); }).attr("width", x.rangeBand()).attr("y", function(d) { return y(d.yaxis); }).attr("height", function(d) { return p.h - y(d.yaxis); });
+ 				bar.append("text").classed('barlabel', true).attr("x", function(d) { return x(d.xaxis) + 25; }).attr("width", x.rangeBand()).attr("y", function(d) { return y(d.yaxis) + 20; }).attr("height", function(d) { return p.h - y(d.yaxis); }).attr("fill", "#666").attr("dy", ".30em").text(function(d) { return '$' + d.yaxis + 'b'; });
 
+ 			chart.append("g").attr("class", "x axis").attr("transform", "translate(0," + p.h + ")").call(xAxis);
+			chart.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text(p.yaxisLabel);
 		});
 	},
 	assessor: function(d){
