@@ -12,7 +12,7 @@ var pieChart = {
 		inRad: null
 	},
 	getPieAttr: function(p, path, contain, w, h, color, inRad){
-		jQuery.getJSON(path + '.json',function(d){
+		jQuery.getJSON('data/' + path + '.json',function(d){
 			p.label = d[2];
 			p.data = d[1];
 			p.w = w;

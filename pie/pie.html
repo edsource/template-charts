@@ -1,24 +1,4 @@
-<style type="text/css">
-	.pie-contain {width:400px;}
-
-	.pie {padding:50px 0 30px 55px;}
-
-	text {font-family:'roboto condensed',helvetica,san-serif;}
-
-	.legend {overflow: hidden;margin:20px 0;}
-	.legend>div {float:left;overflow:hidden;margin:0 10px 10px 0;width:115px;min-height:30px;}
-	.legend-box {float:left;margin-right: 5px;width:20px;height:20px;}
-	.legend p {font-family:'Roboto Condensed', san-serif;font-size:.8em;color:#333;padding-left:5px;margin:0;}
-
-	.one.back {background:#66c2a5;}
-	.two.back {background:#8da0cb;}
-	.three.back {background:#fc8d62;}
-
-	section>.hed h1 {font-size:2em;font-family: "Roboto Condensed";font-weight:700;color:#333;margin:0;}
-
-	.thick {background:#aaa;height:2px;border:none;}
-
-</style>
+<link rel="stylesheet" type="text/css" href="css/pie.css">
 
 <section class="pie-contain">
 	<div class="hed"><h1>Funding for Local Control Funding Formula</h1><p>In 2013, the Legislature passed the Local Control Funding Formula, a new system for education financing that provides uniform base funding per student while channeling extra dollars to districts based on enrollment of English learners, low-income children and foster youths. The Legislature projected it would take eight years to phase in the new formula. 2012-13 was the final year under the old system, 2013-14 the first year under the formula. Although robust revenues put the funding ahead of schedule in 2015-16, the Department of Finance is sticking with its projection of full funding &mdash; the completion of the transition period &mdash; in 2020-21.</p> </div>
@@ -30,7 +10,7 @@
 			<div><div class="legend-box two back"></div><p>Community College</p></div>	
 			<div><div class="legend-box three back"></div><p>Preschool</p></div>	
 		</div>
-	<div id="prop-pie"></div>
+	<div id="pie-chart"></div>
 </section>
 
 	
@@ -40,7 +20,6 @@
 <script type="text/javascript" src="http://edsource.org/wp-content/js/colorbrewer.js"></script>
 <script type="text/javascript" src="js/pie.js"></script>
 <script type="text/javascript">
-//pieChart.getPieAttr(pieChart.vars, 'http://edsource.org/wp-content/iframe/charts/data/prop98-budget-15','#prop-pie', 300, 300, colorbrewer.Set2[3], 50);
-pieChart.getPieAttr(pieChart.vars, 'lcff-budget-15','#lcff-pie', 300, 300, colorbrewer.Set2[3], 50);
+pieChart.getPieAttr(pieChart.vars, 'data','#pie-chart', 300, 300, colorbrewer.Set2[3], 0);
 </script>
 

@@ -2,11 +2,11 @@ import json
 import csv
 data = []
 i = 0
-inputFile = 'data'
-outputFile = 'data'
+inputFile = 'salaries'
+outputFile = 'salaries'
 
 #### IMPORT CSV ####
-with open(inputFile + '.csv', 'rU') as csvFile:
+with open(inputFile + '.csv', 'rb') as csvFile:
 	temp = csv.reader(csvFile, delimiter=',');
 	for row in temp:
 		data.insert(i, row)
