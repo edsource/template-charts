@@ -1,0 +1,202 @@
+<link rel="stylesheet" type="text/css" href="http://edsource.org/wp-content/css/reset.css">
+<link href='http://fonts.googleapis.com/css?family=Crimson+Text:400,400italic,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
+<style type="text/css">
+	#container {width:80%;max-width:1200px;margin:20px auto;}	
+	.mobile {display: block;}
+	.desktop {display: none;}
+
+	.candidate.back {background:#66c2a5;}
+	.outside.back {background:#fc8d62;}
+	.other.back {background:#8da0cb;}
+
+	.pie {padding:20px 5%	;}
+
+	.candidate.font {color:#66c2a5;}
+	.outside.font {color:#fc8d62;}
+	.other.font {color:#8da0cb;}
+
+	.thick {background:#aaa;height:2px;border:none;}
+	.thin {background:#dddddc;height:1px;border:none;}
+
+	.row {height:30px;margin-bottom: 10px;position:relative;}
+	.bar {background:#aaa;height:30px;position: absolute;top: 0;left: 12%;}
+	.text {float:left;position: absolute; top: 8px; left: 5px;font-family:'PT Sans', san-serif;padding: 0 0 0 0;font-size:.8em;color:#444;}
+	.icon {position:absolute;top:0;left:0;}
+
+	.section>.hed h1 {font-size:2em;font-family: "PT Sans";font-weight:700;}
+	hr.underline {}
+	
+	.subhed {width:100%;margin:20px 0;}
+	.subhed h2 {font-size:1.2em;color:#555;font-family: "PT Sans";font-weight:700;text-transform: uppercase;}
+
+	.legend {overflow: hidden;margin:20px 0 0 0;}
+	.legend>div {float:left;overflow:hidden;margin:0 10px 10px 0;width:115px;min-height:30px;}
+	.legend-box {float:left;margin-right: 5px;width:20px;height:20px;}
+	.legend p {font-family:'PT Sans', san-serif;font-size:.8em;color:#333;padding-left:5px;}
+
+	#all-races {width:100%;margin:30px 0 0 0;overflow:hidden;}
+		.all-races.chart {width:100%;}
+		.all-races.meta {width:100%;}
+			.all-races.meta>div {margin:10% auto;}
+			.all-races.meta>div h2 {font-family:'PT Sans', san-serif;text-align:center;font-size: 2em;font-weight:700;}
+			.all-races.meta>div h3 {font-family:'PT Sans', san-serif;text-align:center;padding:10px 0 0 0;color:#666;}
+
+	
+	#pie-multi {margin:20px 0;overflow:hidden;}
+		.pie-multi {overflow:hidden;float:left;margin:0 5%;border-bottom:1px #aaa solid;padding:10px 0;}
+			.pie-multi-title {font-family:'PT Sans', san-serif;  text-transform: uppercase; text-align: center;}
+			.pie-multi-data>div { margin: 30px 0;}
+			.pie-multi h2 {font-family:'PT Sans', san-serif;text-align:center;font-size: 1.4em;}
+			.pie-multi h3 {font-family:'PT Sans', san-serif;text-align:center;padding:5px 0 0 0;color:#aaa;}
+
+	@media screen and (min-width:600px){
+		.icon {left:5%;}
+	}
+
+	@media screen and (min-width:768px){
+		.all-races.chart {float:left;min-width:340px;width:40%;}
+		.all-races.meta {float:right;width:40%;}
+
+		.pie-multi {border-bottom:0}
+	}
+
+	@media screen and (min-width: 1024px){
+		#container {width: 60%;}
+		.mobile {display: none;}
+		.desktop {display: block;}
+
+		.race-where {width:40%;float:left;margin:0 5%;min-height:350px;}
+
+	}
+
+</style>
+
+<div id="container">
+	<section class="section" role="where-money">
+		<div class="hed">
+			<h1>Where money is coming from?</h1>
+			<hr class="thick">
+		</div>
+		<div class="legend">
+			<div><div class="legend-box candidate back"></div><p>Candidate</p></div>	
+			<div><div class="legend-box outside back"></div><p>Outside Groups</p></div>	
+			<div><div class="legend-box other back"></div><p>Other</p></div>	
+		</div>
+		<div id="all-races">
+			<section class="subhed">
+				<h2 >All Oakland Races</h2>
+				<hr class="thin">
+			</section>
+			<section class="all-races chart"></section>
+			<section class="all-races meta">
+				<div>
+					<h2 class="candidate font">$90,000</h2>
+					<h3>Raised by Candidate</h3>
+				</div>
+				<div>
+					<h2 class="outside font">$100,000</h2>
+					<h3>Outside Group Spending</h3>
+				</div>
+				<div>
+					<h2 class="other font">$20,000</h2>
+					<h3>Other</h3>
+				</div>
+			</section>
+		</div>
+		<div>
+			<section class="subhed">
+				<h2>Race Breakdown</h2>
+				<hr class="thin">
+			</section>
+			<section id="pie-multi">
+				<div class="pie-multi">
+					<div class="pie-multi-title">Mayor</div>
+					
+						<div>
+							<h2 class="candidate font">$90,000</h2>
+							<h3>Raised by Candidate</h3>
+						</div>
+						<div>
+							<h2 class="outside font">$100,000</h2>
+							<h3>Outside Group Spending</h3>
+						</div>
+						<div>
+							<h2 class="other font">$20,000</h2>
+							<h3>Other</h3>
+						</div>
+					</div>
+				</div>
+				<div class="pie-multi">
+					<div class="pie-multi-title">District 3, Council</div>
+					<div class="pie-multi-data">
+						<div>
+							<h2 class="candidate font">$90,000</h2>
+							<h3>Raised by Candidate</h3>
+						</div>
+						<div>
+							<h2 class="outside font">$100,000</h2>
+							<h3>Outside Group Spending</h3>
+						</div>
+						<div>
+							<h2 class="other font">$20,000</h2>
+							<h3>Other</h3>
+						</div>
+					</div>
+				</div>
+				<div class="pie-multi">
+					<div class="pie-multi-title">City Attorney</div>
+					<div class="pie-multi-data">
+						<div>
+							<h2 class="candidate font">$90,000</h2>
+							<h3>Raised by Candidate</h3>
+						</div>
+						<div>
+							<h2 class="outside font">$100,000</h2>
+							<h3>Outside Group Spending</h3>
+						</div>
+						<div>
+							<h2 class="other font">$20,000</h2>
+							<h3>Other</h3>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</section>	
+	
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="http://edsource.org/wp-content/js/colorbrewer.js"></script>
+<script type="text/javascript" src="js/pie-multi.js"></script>
+<script type="text/javascript">
+	window.onload = function(){
+		pieMulti.getPieAttr(pieMulti.vars, 'data/data','#pie-multi', 10, 100, colorbrewer.Set2[3], 50);
+	}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

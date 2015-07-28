@@ -1,0 +1,61 @@
+#container {width:80%;max-width:1200px;margin:20px auto;}	
+.mobile {display: block;}
+.desktop {display: none;}
+
+.candidate.back {background:#66c2a5;}
+.outside.back {background:#fc8d62;}
+.other.back {background:#8da0cb;}
+
+.candidate.font {color:#66c2a5;}
+.outside.font {color:#fc8d62;}
+.other.font {color:#8da0cb;}
+
+.pie {padding:20px;}
+
+.thick {background:#aaa;height:2px;border:none;}
+.thin {background:#dddddc;height:1px;border:none;}
+
+.row {height:30px;margin-bottom: 10px;position:relative;}
+.bar {background:#aaa;height:30px;position: absolute;top: 0;left: 12%;}
+.text {float:left;position: absolute; top: 8px; left: 5px;font-family:'PT Sans', san-serif;padding: 0 0 0 0;font-size:.8em;color:#444;}
+.icon {position:absolute;top:0;left:0;}
+
+.section>.hed h1 {font-size:2em;font-family: "PT Sans";font-weight:700;}
+hr.underline {}
+
+.subhed {width:100%;margin:20px 0;}
+.subhed h2 {font-size:1.2em;color:#555;font-family: "PT Sans";font-weight:700;text-transform: uppercase;}
+
+.legend {overflow: hidden;margin:20px 0 0 0;}
+.legend>div {float:left;overflow:hidden;margin:0 10px 10px 0;width:115px;min-height:30px;}
+.legend-box {float:left;margin-right: 5px;width:20px;height:20px;}
+.legend p {font-family:'PT Sans', san-serif;font-size:.8em;color:#333;padding-left:5px;}
+
+#all-races {width:100%;margin:30px 0 0 0;overflow:hidden;}
+	.all-races.chart {width:100%;}
+	.all-races.meta {width:100%;}
+		.all-races.meta>div {margin:10% auto;}
+		.all-races.meta>div h2 {font-family:'PT Sans', san-serif;text-align:center;font-size: 2em;}
+		.all-races.meta>div h3 {font-family:'PT Sans', san-serif;text-align:center;padding:10px 0 0 0;color:#666;}
+
+
+.race-where-multi {margin:30px 0;overflow:hidden;}
+.race-where {width:100%;}
+
+@media screen and (min-width:600px){
+	.icon {left:5%;}
+}
+
+@media screen and (min-width:768px){
+	.all-races.chart {float:left;min-width:340px;width:40%;}
+	.all-races.meta {float:right;width:40%;}
+}
+
+@media screen and (min-width: 1024px){
+	#container {width: 60%;}
+	.mobile {display: none;}
+	.desktop {display: block;}
+
+	.race-where {width:40%;float:left;margin:0 5%;min-height:350px;}
+
+}
