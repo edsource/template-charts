@@ -1,0 +1,34 @@
+.ed-chart {margin:30px 0;}
+.bar-contain {width:600px;}
+
+text {font-family:'Helvetica',helvetica,san-serif;}
+.bar-contain .tick text {font-size:.9em;color:#333;}
+.bar-contain .barlabel {font-size: .95em;}
+
+.legend {overflow: hidden;margin:0 0 20px 0;}
+.legend>div {float:left;overflow:hidden;margin:0 10px 10px 0;width:100px;min-height:30px;}
+.legend-box {float:left;margin-right: 5px;width:20px;height:20px;}
+.legend p {font-family:'Helvetica', san-serif;font-size:.8em;color:#333;padding-left:5px;margin:0;}
+
+.one.back {background:#66c2a5;}
+.two.back {background:#fc8d62;}
+.three.back {background:#8da0cb;}
+.four.back {background:#9dd8c5}
+
+section>.hed h1 {font-size:2em;font-family: "Helvetica";font-weight:700;color:#333;margin:0;}
+
+.thick {background:#aaa;height:2px;border:none;}
+
+
+.bar {fill: #66c2a5;padding:0;}
+.bar-contain g g:first-of-type .bar {fill:#9dd8c5;}
+.axis {font: 10px sans-serif;}
+.axis path, .axis line {fill: none;stroke: #333;shape-rendering: crispEdges;}
+.x.axis path {display: none;}
+
+
+.thick {background:#aaa;height:2px;border:none;}
+
+@media screen and (min-width: 768px){
+	.legend>div {width:123px;}
+}

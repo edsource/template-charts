@@ -62,3 +62,6 @@ var columnChart = {
 
 
 
+window.onload = function(){
+	columnChart.getAttr(columnChart.vars, 'data/data', '#lcff-bar', 600, 300, [20,20,20,40], false, 'in billions of dollars', '$', 10);
+}
