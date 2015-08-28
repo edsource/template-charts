@@ -81,3 +81,6 @@ var pieChart = {
 	}
 }
 
+window.onload = function(){
+	pieChart.getPieAttr(pieChart.vars, 'data','#pie-chart', 300, 300, colorbrewer.Set2[3], 0);
+}
