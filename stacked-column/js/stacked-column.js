@@ -87,7 +87,7 @@ var stackedColumnChart = {
 			var tip = d3.tip().html(function(d) { 
 				jQuery('.n').addClass('d3-tip');
 				if (p.tickFormat == '.0%'){
-					return (d.name + '<br><br>' + Math.round((d.y1 - d.y0)*100) + '%');
+					return (d.name + '<br>' + Math.round((d.y1 - d.y0)*100) + '%');
 				}
 				
 			});
