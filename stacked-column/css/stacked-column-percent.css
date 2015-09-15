@@ -1,6 +1,6 @@
-.yaxis path, .yaxis line, .xaxis path, .xaxis line {fill:none;stroke:#aaa;shape-rendering:crispEdges;}
-.tick text {font-size:.8em;font-family:helvetica,san-serif;fill:#333;}
-rect {cursor:pointer;}
+.s_c_p .yaxis path, .s_c_p .yaxis line, .s_c_p .xaxis path, .s_c_p .xaxis line {fill:none;stroke:#aaa;shape-rendering:crispEdges;}
+.s_c_p .tick text {font-size:.75em;font-family:helvetica,san-serif;fill:#333;}
+.s_c_p rect {cursor:pointer;}
 
 /* D3 TIP
 ==========================================*/
