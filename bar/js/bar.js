@@ -1,5 +1,5 @@
 var barChart = {
-	getAttr: function(type, path, contain, w, h, m, color, sort, xlabel, ylabel, tF, tick, pad, title, subhed, source){
+	getAttr: function(type, path, contain, w, h, m, color, sort, xlabel, ylabel, tF, tick, pad, title, subhed, source, max){
 		var p = {
 			label:[],
 			data:[],
@@ -18,7 +18,8 @@ var barChart = {
 			title:null,
 			subhed:null,
 			source:null,
-			type:null
+			type:null,
+			max: null
 		}
 		p.type = type;
 
@@ -36,7 +37,18 @@ var barChart = {
 		p.yaxisLabel = ylabel;
 		p.tickFormat = tF;
 		p.ticks = tick;
-		p.color = color;
+
+		if (max !== null || max !== 'null'){
+			p.max = max;
+		}
+
+		if (color === 'BuPu'){
+			p.color = '#198c96';
+		}
+		else {
+			p.color = color;
+		}
+		
 		p.padding = pad;
 		p.sort = sort;
 
@@ -57,13 +69,13 @@ var barChart = {
 
 		/* SCALE
 		==========================*/
-		var xScale = d3.scale.ordinal().rangeRoundBands([0, p.w - 30], p.padding);
+		var xScale = d3.scale.ordinal().rangeRoundBands([0, p.w - (p.m.left - 10)], p.padding);
 		var yScale = d3.scale.linear().rangeRound([p.h, 0]);
 
 		/* AXES
 		==========================*/
 		var xAxis = d3.svg.axis().scale(xScale).orient('bottom');
-		var yAxis = d3.svg.axis().scale(yScale).orient('left').ticks(p.tick).tickFormat(d3.format(p.tickFormat));
+		var yAxis = d3.svg.axis().scale(yScale).orient('left').ticks(p.ticks).tickFormat(d3.format(p.tickFormat));
 
 		/* CHART
 		==========================*/
@@ -76,19 +88,30 @@ var barChart = {
 			if (error) throw error;
 
 			p.data = data;
-			color.domain(d3.keys(data[0]).filter(function(key){ console.log(data[0]); return key !== 'xlabel'}));
-			
 
-			/* MAPS POS
+			/* MAPS POS	
 			====================================*/
-			
-
 			xScale.domain(data.map(function(d){ return d.xlabel;}));
-			//yScale.domain([0, d3.max(data, function(d) { return d.total; })]);
+			
+			if (p.max == null){
+				yScale.domain([0, d3.max(data, function(d) {
+					if (p.tickFormat === "$" || p.tickFormat === ",g"){
+						return parseInt(d.value);
+					}
+					else if (p.tickFormat === ".0%")  {
+						return parseFloat(d.value); 
+						
+					}
+				})]).nice().clamp(true);	
+			}
+			else {
+				yScale.domain([0, +p.max]).nice().clamp(true);
+			}
+
 			
 			/* SORT
 			====================================*/
-			if (p.sort == true){data.sort(function(a,b) {return b.seg[0].y1 - a.seg[0].y1;})}
+			if (p.sort == true || p.sort === 'true'){data.sort(function(a,b) {return b.value - a.value;})}
 
 			/* DRAW AXES
 			====================================*/
@@ -101,31 +124,26 @@ var barChart = {
 			var tip = d3.tip().html(function(d) { 
 				jQuery('.n').addClass('d3-tip');
 				if (p.tickFormat == '.0%'){
-					return (d.name + '<br>' + Math.round((d.y1 - d.y0)*100) + '%');
+					return (d.xlabel + '<br>' + Math.round(d.value*100) + '%');
 				}
-				else if (p.tickFormat == '$'){
-					return (d.name + '<br>' + '$' + barChart.commaSeparateNumber(Math.round(d.y1 - d.y0)));
+				else if (p.tickFormat == '$,'){
+					return (d.xlabel + '<br>' + '$' + barChart.commaSeparateNumber(Math.round(d.value)));
 				}
-				else if (p.tickFormat == '#'){
-					return (d.name + '<br>' + barChart.commaSeparateNumber(Math.round(d.y1 - d.y0)));
+				else if (p.tickFormat == ',g'){
+					return (d.xlabel + '<br>' + barChart.commaSeparateNumber(Math.round(d.value)));
 				}
 			});
 			chart.call(tip);
 
 			/* DRAW COLUMNS
 			====================================*/
-			var items = chart.selectAll('.xitem').data(data).enter()
-						.append('g').attr('class','xitem').attr('transform', function(d){return 'translate(' + xScale(d.xlabel) + ',0)';});
-
-			items.selectAll('rect').data(function(d) {return d.seg;}).enter().append('rect')
-				.attr('width', xScale.rangeBand()).attr('y', function(d) {return yScale(d.y1);}).attr('height', function(d) {return yScale(d.y0) - yScale(d.y1); }).style('fill', function(d){return color(d.name);})
-				.on('mouseover', tip.show).on('mouseout', tip.hide);
+			chart.selectAll(".xitem").data(data).enter().append("rect").attr("class", "xitem")
+		     	.attr("x", function(d) { return xScale(d.xlabel); }).attr("width", xScale.rangeBand()).attr("y", function(d) { return yScale(d.value); }).attr("height", function(d) { return p.h - yScale(d.value); })
+		     	.style('fill', p.color).on('mouseover', tip.show).on('mouseout', tip.hide);
 
 			/* ADJUST SVG
 			====================================*/
 			jQuery(contain + ' svg').attr('height', p.h+(p.m.top * 2));
-			var svgg = jQuery(contain + ' svg').attr('height');		
-
 			
 			/* ADD META DETAILS
 			=================================*/
@@ -137,8 +155,6 @@ var barChart = {
 			/* STYLES
 			=================================*/
 			jQuery(contain).css('width', parseInt(p.w)+ 'px');
-
-			jQuery(contain + ' rect').css('fill', color)
 
 			jQuery(contain + ' #meta h2').css({'margin':0});
 			jQuery(contain + ' #meta p:eq(0)').css({'margin':0});

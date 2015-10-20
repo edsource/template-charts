@@ -53,8 +53,13 @@ var prettyTables = {
 			p.rows = p.data.length;
 			p.columns = p.data[0].length;
 
+			console.log(sort)
+
+			var s = sort.split(',');
+			p.sort[0] = s[0];
+			p.sort[1] = s[1];
+
 			p.contain = '#' + contain;
-			p.sort = sort;
 			p.search = search;
 			p.title = title;
 			p.subhed = subhed;
@@ -106,15 +111,19 @@ var prettyTables = {
 					}
 					else {
 						if (p.format === '%'){
-							var item = (parseFloat(p.data[i][j]) * 100) + '%';
+							var item = Math.round(parseFloat(p.data[i][j]) * 100) + '%';
 							td.appendChild(document.createTextNode(item));
 						}
 						else if (p.format === '#'){
-							var item = prettyTables.commaSeparateNumber(parseInt(p.data[i][j]));
+							var item = parseInt(p.data[i][j]);
 							td.appendChild(document.createTextNode(item));
 						}
 						else if (p.format === '$'){
 							var item = '$' + prettyTables.commaSeparateNumber(parseInt(p.data[i][j]));
+							td.appendChild(document.createTextNode(item));
+						}
+						else if (p.format === 'txt'){
+							var item = p.data[i][j];
 							td.appendChild(document.createTextNode(item));
 						}
 					}
@@ -136,7 +145,7 @@ var prettyTables = {
 
 		/* CONFIGURE TABLESORTER
 		======================================*/ 
-		jQuery(p.contain + ' table').tablesorter({sortList:[[0,0]]});
+		jQuery(p.contain + ' table').tablesorter({sortList:[[p.sort[0],p.sort[1]]]});
 
 		/* SEARCH COMMANDS
 		======================================*/    
@@ -153,11 +162,27 @@ var prettyTables = {
 			    jQuery('#pretty-table-search').val('');
 			})
 	   }
-		
+
+	   /* META DATA
+		======================================*/ 
+		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-meta').append('<h2>'+ p.title +'</h2>');	
+		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-meta').append('<p>'+ p.subhed +'</p>');	
+		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-meta').append('<p><em>'+ p.source +'</em></p>');	
+
+		/* STYLES
+		======================================*/ 	
+		var totalRows = jQuery('.pretty-table[data="'+ p.contain +'"] tr').size();
+
+		/*if (totalRows < 12){
+			jQuery('.pretty-table[data="'+ p.contain +'"] tr').css('border', 'none');
+			jQuery('.pretty-table[data="'+ p.contain +'"] thead tr').css({
+				'border-bottom': '1px solid #aaa',
+				'border-top': '1px solid #aaa'
+			});
+		}*/
 
 	}	
 }
-
 
 
 

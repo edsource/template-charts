@@ -45,7 +45,6 @@ var stackedColumnChart = {
 		p.subhed = subhed;
 		p.source = source;
 
-		console.log(p.contain)
 		stackedColumnChart.drawChart(p);
 	},
 	commaSeparateNumber:function(val){
@@ -59,7 +58,7 @@ var stackedColumnChart = {
 
 		/* SCALE
 		==========================*/
-		var xScale = d3.scale.ordinal().rangeRoundBands([0, p.w - 30], p.padding);
+		var xScale = d3.scale.ordinal().rangeRoundBands([0, p.w - (p.m.left - 10)], p.padding);
 		var yScale = d3.scale.linear().rangeRound([p.h, 0]);
 
 		/* COLOR
@@ -69,7 +68,7 @@ var stackedColumnChart = {
 		/* AXES
 		==========================*/
 		var xAxis = d3.svg.axis().scale(xScale).orient('bottom');
-		var yAxis = d3.svg.axis().scale(yScale).orient('left').ticks(p.tick).tickFormat(d3.format(p.tickFormat));
+		var yAxis = d3.svg.axis().scale(yScale).orient('left').ticks(p.ticks).tickFormat(d3.format(p.tickFormat));
 
 		/* CHART
 		==========================*/
@@ -82,7 +81,8 @@ var stackedColumnChart = {
 			if (error) throw error;
 
 			p.data = data;
-			color.domain(d3.keys(data[0]).filter(function(key){ console.log(data[0]); return key !== 'xlabel'}));
+
+			color.domain(d3.keys(data[0]).filter(function(key){ return key !== 'xlabel'}));
 			
 
 			/* MAPS Y POS FOR SEGMENTS
@@ -90,25 +90,25 @@ var stackedColumnChart = {
 			if (p.type === 'stackedbarpercent'){
 				data.forEach(function(d){
 					var y0 = 0;
-					d.seg = color.domain().map(function(name){ return {name:name, y0:y0, y1: y0 += +d[name]}; })
+					d.seg = color.domain().map(function(name){ return {data:d[name], name:name, y0:y0, y1: y0 += +d[name]}; })
 					d.seg.forEach(function(d) {d.y0 /= y0; d.y1 /= y0;});
 				})
 			}
 			else if (p.type === 'stackedbar'){
 				data.forEach(function(d) {
 				   	var y0 = 0;
-				   	d.seg = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
+				   	d.seg = color.domain().map(function(name) { return {data:d[name], name: name, y0: y0, y1: y0 += +d[name]}; });
 				   	d.total = d.seg[d.seg.length - 1].y1;
 				});
 
 				/* MAX VALUE
 				====================================*/
-				yScale.domain([0, d3.max(data, function(d) { return d.total; })]);
+				yScale.domain([0, d3.max(data, function(d) { return d.total; })]).nice().clamp(true);
 			}
 
 			/* SORT
 			====================================*/
-			if (p.sort == true){data.sort(function(a,b) {return b.seg[0].y1 - a.seg[0].y1;})}
+			if (p.sort == true || p.sort === 'true'){data.sort(function(a,b) {return b.seg[0].y1 - a.seg[0].y1;})}
 
 			/* MAP X COLUMNS
 			====================================*/
@@ -124,13 +124,14 @@ var stackedColumnChart = {
 			====================================*/
 			var tip = d3.tip().html(function(d) { 
 				jQuery('.n').addClass('d3-tip');
+				console.log(d)
 				if (p.tickFormat == '.0%'){
-					return (d.name + '<br>' + Math.round((d.y1 - d.y0)*100) + '%');
+					return (d.name + '<br>' + d.data * 100 + '%');
 				}
-				else if (p.tickFormat == '$'){
+				else if (p.tickFormat == '$,'){
 					return (d.name + '<br>' + '$' + stackedColumnChart.commaSeparateNumber(Math.round(d.y1 - d.y0)));
 				}
-				else if (p.tickFormat == '#'){
+				else if (p.tickFormat == ',g'){
 					return (d.name + '<br>' + stackedColumnChart.commaSeparateNumber(Math.round(d.y1 - d.y0)));
 				}
 			});
@@ -142,7 +143,7 @@ var stackedColumnChart = {
 						.append('g').attr('class','xitem').attr('transform', function(d){return 'translate(' + xScale(d.xlabel) + ',0)';});
 
 			items.selectAll('rect').data(function(d) {return d.seg;}).enter().append('rect')
-				.attr('width', xScale.rangeBand()).attr('y', function(d) {return yScale(d.y1);}).attr('height', function(d) {return yScale(d.y0) - yScale(d.y1); }).style('fill', function(d){return color(d.name);})
+				.attr('width', xScale.rangeBand()).attr('y', function(d) {return yScale(d.y1);}).attr('height', function(d) {return yScale(d.y0) - yScale(d.y1); }).style('fill', function(d){ return color(d.name);})
 				.on('mouseover', tip.show).on('mouseout', tip.hide);
 
 			/* ADJUST SVG
@@ -166,14 +167,14 @@ var stackedColumnChart = {
 
 			/* STYLES
 			=================================*/
-			jQuery(contain).css('width', (parseInt(p.w) + 50) + 'px');
+			jQuery(contain).css('width', parseInt(p.w)+ 'px');
 
 			jQuery(contain + ' #meta h2').css({'margin':0});
 			jQuery(contain + ' #meta p:eq(0)').css({'margin':0});
 			jQuery(contain + ' #meta p:eq(1)').css({'font-style':'italic', 'font-size':'.9em','margin-top':'5px'});
 
 			jQuery(contain + ' #legend').css({'overflow':'hidden', 'margin':'20px 0 0 0'});
-			jQuery(contain + ' .legend-item').css({'float':'left','overflow':'hidden', 'margin':'0 15px 0 0'});
+			jQuery(contain + ' .legend-item').css({'float':'left','overflow':'hidden', 'margin':'0 15px 10px 0'});
 			jQuery(contain + ' .legend-item>div').css({'width':'30px','height':'30px','float':'left'});
 			jQuery(contain + ' .legend-item p').css({'font-size':'.9em','color':'#333','float': 'right', 'margin': '0 0 0 10px'});
 		});

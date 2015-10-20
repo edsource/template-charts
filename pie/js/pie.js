@@ -1,33 +1,70 @@
 var pieChart = {
-	vars:{
-		data:[],
-		label:[],
-		w:null,
-		h:null,
-		r:null,
-		labelr:null,
-		color:null,
-		contain:null,
-		outRad: null,
-		inRad: null
-	},
-	getPieAttr: function(p, path, contain, w, h, color, inRad){
-		jQuery.getJSON('data/' + path + '.json',function(d){
-			p.label = d[2];
-			p.data = d[1];
-			p.w = w;
-			p.h = h;
-			p.r = Math.min(w, h) / 2;
-			p.labelr = p.r + 30;
-			p.color = color;
-			p.contain = contain;
-			p.outRad = p.w / 2
-			p.inRad = inRad;
+	getAttr: function(type, path, contain, w, h, m, padding, color, inrad, title, subhed, source, legend){
+		var p = {
+			label:[],
+			data:[],
+			w:null,
+			h:null,
+			m:{},
+			contain:null,
+			path:null,
+			color:null,
+			inRad:null,
+			title:null,
+			subhed:null,
+			source:null,
+			type:null,
+			legend:null,
+			keys:null,
+			padding:null
+		}
 
-			pieChart.drawChart(pieChart.vars);
-		})
+		p.type = type;
+
+		p.w = parseInt(w)
+		p.h = parseInt(h)
+		p.m = {
+			top:m[0],
+			right:m[1],
+			bottom:m[2],
+			left:m[3]
+		};
+		p.r = Math.min(w, h) / 2;
+		p.labelr = p.r + 30;
+		p.padding = padding;
+
+		p.path = path;
+		p.contain = '#' + contain;
+		p.color = color.split(',');
+		p.inRad = inrad;
+		p.outRad = p.w / 2
+
+		p.title = title;
+		p.subhed = subhed;
+		p.source = source;
+		p.legend = legend;
+
+		d3.csv(path, function(error, data){
+			if (error) throw error;
+
+			var keys = Object.keys(data[1]);
+			p.keys = keys;
+			
+			for (var i = 0; i < keys.length; i++) {
+			    var x = parseInt(data[0][keys[i]]);
+			    var y = data[1][keys[i]];
+
+			    p.data.push(x);
+			    p.label.push(y);
+
+			}
+			
+			pieChart.drawChart(p);
+
+		});
 	},
 	drawChart: function(p){
+
 		var xAdj, yAdj, y1, y2;
 		var arc = d3.svg.arc().innerRadius(p.inRad).outerRadius(p.outRad);
 		var pie = d3.layout.pie().sort(null);
@@ -48,21 +85,29 @@ var pieChart = {
 				            yAdj = (y/h * p.labelr);
 				        return "translate(" + xAdj +  ',' + yAdj +  ")"; 
 				    }).attr("dy", ".35em").attr("text-anchor", function(d) {return (d.endAngle + d.startAngle)/2 > Math.PI ? 'end' : 'start'}).data(p.label).attr('fill', '#666').text(function(d, i) {return d; });
-				    arcs.append('line').attr('stroke', '#666').attr("x2", function(d) {
-						var c = arc.centroid(d),
-				            x = c[0],
-				            y = c[1],
-				            // pythagorean theorem for hypotenuse
-				            h = Math.sqrt(x*x + y*y);
-				        return (x/h * p.labelr);}).attr("y2", function(d) {
-						var c = arc.centroid(d),
-				            x = c[0],
-				            y = c[1],
-				            // pythagorean theorem for hypotenuse
-				            h = Math.sqrt(x*x + y*y);
-				            var adj = (d.endAngle + d.startAngle)/2 > Math.PI ? 15 : -15;
-				        return (y/h * p.labelr) + adj }).attr('y1', 0).attr('x1', 0);
-		this.adjustLine();
+		
+
+		/* META
+		===========================*/
+		jQuery('.pie-contain[data="'+ p.contain +'"] .pie-meta h2').text(p.title);
+		jQuery('.pie-contain[data="'+ p.contain +'"] .pie-meta p:eq(0)').text(p.subhed);
+		jQuery('.pie-contain[data="'+ p.contain +'"] .pie-meta p:eq(1) em').text(p.source);
+
+		/* LEGEND
+		===========================*/
+		if (p.legend == true || p.legend === 'true'){
+			for (var i=0 ; i < p.data.length ; i++){
+				jQuery('.pie-contain[data="'+ p.contain +'"] .pie-legend').append('<div><div class="pie-legend-box"></div><p>'+ p.keys[i] +'</p></div>');
+				jQuery('.pie-contain[data="'+ p.contain +'"] .pie-legend>div:eq('+i+') .pie-legend-box').css('background', p.color[i]);
+			}
+		}
+
+		/* STYLE
+		===========================*/
+		jQuery(p.contain + ' svg').css('padding', p.padding + 'px');
+		jQuery('.pie-contain[data="'+ p.contain +'"]').css('width', (p.w + (parseInt(p.padding) * 2)) + 'px');
+
+		//this.adjustLine();
 	},
 	adjustLine: function(){
 		jQuery('.arc:eq(0) line').attr({
@@ -81,6 +126,3 @@ var pieChart = {
 	}
 }
 
-window.onload = function(){
-	pieChart.getPieAttr(pieChart.vars, 'data','#pie-chart', 300, 300, colorbrewer.Set2[3], 0);
-}
