@@ -173,15 +173,47 @@ var prettyTables = {
 		======================================*/ 	
 		var totalRows = jQuery('.pretty-table[data="'+ p.contain +'"] tr').size();
 
-		/*if (totalRows < 12){
-			jQuery('.pretty-table[data="'+ p.contain +'"] tr').css('border', 'none');
-			jQuery('.pretty-table[data="'+ p.contain +'"] thead tr').css({
-				'border-bottom': '1px solid #aaa',
-				'border-top': '1px solid #aaa'
-			});
-		}*/
+		/* ADD FIXED HEADER
+		======================================*/
+		jQuery('.pretty-table[data="'+ p.contain +'"]').append('<div class="pretty-table-fixed"></div>');
+		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed').detach().insertBefore(p.contain);
 
-	}	
+		for (var j = 0 ; j < p.columns; j++){
+			if (j==0){
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed').append('<div>' + p.rowName + '</div>');
+			}
+			else {
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed').append('<div>' + p.data[0][j]  + '</div>');
+			}
+		} 
+
+		var fixedHedWidth = 100 / p.columns;
+		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed div').css('width', fixedHedWidth + '%');
+
+		/* WORK THE FIXED HEADER
+		======================================*/
+		var realHed = jQuery('.pretty-table[data="'+ p.contain +'"] thead').offset();
+		var lastRow = jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr:last-of-type').offset();
+
+		jQuery(document).on('scroll', function(){
+			var curPos = jQuery(this).scrollTop();
+
+			var tableWidth = jQuery('.pretty-table[data="'+ p.contain +'"] table').width();
+			jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed').css('width', tableWidth + 'px');
+
+			if (curPos > realHed.top + 60 && curPos < lastRow.top) {
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed').show();
+			}
+			else {
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed').hide();
+			}
+		});
+
+
+		
+		
+
+	},
 }
 
 
