@@ -28,7 +28,7 @@ var prettyTables = {
 	    }
 	    return val;
 	},
-	getAttr: function(path, contain, sort, search, title, subhed, source, rowName, format){
+	getAttr: function(path, contain, sort, search, title, subhed, source, rowName, format, links){
 		/* DATA PLZ */
 		var p = {
 			data:[],
@@ -42,23 +42,31 @@ var prettyTables = {
 			source:null,
 			search:false,
 			rowName:null,
-			format:null
+			format:null,
+			links:null
 		}
 		
 		p.path = path;
+
+		/* GRAB DATA AND SET ATTRS
+		=======================================*/
 		d3.text(path, function(error, data){
 			if (error) throw error;
 
+			/* Data
+			---------------------------------*/
 			p.data = d3.csv.parseRows(data);
 			p.rows = p.data.length;
 			p.columns = p.data[0].length;
 
-			console.log(sort)
-
+			/* Sorting Default
+			---------------------------------*/
 			var s = sort.split(',');
 			p.sort[0] = s[0];
 			p.sort[1] = s[1];
 
+			/* Attrs
+			---------------------------------*/
 			p.contain = '#' + contain;
 			p.search = search;
 			p.title = title;
@@ -66,6 +74,7 @@ var prettyTables = {
 			p.source = source;
 			p.rowName = rowName;
 			p.format = format;
+			p.links = links;
 
 			prettyTables.createTable(p);
 		});
@@ -83,12 +92,17 @@ var prettyTables = {
 		thead = document.createElement('thead');
 		tbody = document.createElement('tbody');
 
-		/* ROWS
-		---------------------------------*/
+		/* POPULATE DATA
+		======================================*/ 
 		for (var i = 0; i < p.rows; i++){
 			tr = document.createElement('tr');
+
+			/* Header
+			---------------------------------*/
 			if (i == 0){
 				for (var j = 0 ; j < p.columns; j++){
+					if (p.links === 'yes' && j == p.columns - 1){break;}
+
 					th = document.createElement('th');
 					
 					if (j==0){
@@ -103,13 +117,37 @@ var prettyTables = {
 				tr.appendChild(frag3);
 				thead.appendChild(tr);
 			}
-			else {
+			/* Remaining Rows
+			---------------------------------*/
+			else {			
 				for (var j = 0 ; j < p.columns; j++){
+
+					/* Check if links, + means skip last column
+					----------------------------------------------*/
+					if (p.links === 'yes' && j == p.columns - 1){console.log(p.columns - 1);break;}
+					
+					/* Build cell */
 					td = document.createElement('td');
+
+					/* Column A
+					---------------------------------*/
 					if (j==0){
-						td.appendChild(document.createTextNode(p.data[i][j]));
+						
+						/* Add Links to Column A
+						---------------------------------*/
+						if (p.links === 'yes'){
+							var link = document.createElement('a');
+							link.setAttribute('href', p.data[i][p.columns - 1]);
+							link.innerHTML = p.data[i][0];
+							td.appendChild(link);
+						}
+						/* Default Column A
+						---------------------------------*/
+						else {td.appendChild(document.createTextNode(p.data[i][j]));}						
 					}
-					else {
+					/* Remaining Columns
+					---------------------------------*/
+					else {					
 						if (p.format === '%'){
 							var item = Math.round(parseFloat(p.data[i][j]) * 100) + '%';
 							td.appendChild(document.createTextNode(item));
@@ -128,6 +166,7 @@ var prettyTables = {
 						}
 					}
 					frag2.appendChild(td);
+					
 				}
 
 				/* Append Row */
@@ -136,8 +175,8 @@ var prettyTables = {
 			}
 		}
 
-		/* TABLE
-		---------------------------------*/
+		/* PUT TABLE TOGETHER
+		======================================*/ 
 		table.appendChild(thead);
 		tbody.appendChild(frag);
 		table.appendChild(tbody);
@@ -215,9 +254,3 @@ var prettyTables = {
 
 	},
 }
-
-
-
-
-    
-
