@@ -222,11 +222,16 @@ var prettyTables = {
 				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed').append('<div>' + p.rowName + '</div>');
 			}
 			else {
+				if (p.links === 'yes' && j == p.columns - 1){break;}
 				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed').append('<div>' + p.data[0][j]  + '</div>');
 			}
 		} 
 
-		var fixedHedWidth = 100 / p.columns;
+		/* FIXED HEADER WIDTH
+		======================================*/
+		if (p.links === 'yes'){var fixedHedWidth = 100 / (p.columns - 1);console.log(fixedHedWidth)}
+		else {var fixedHedWidth = 100 / p.columns;console.log(fixedHedWidth)}
+
 		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed div').css('width', fixedHedWidth + '%');
 
 		/* WORK THE FIXED HEADER
@@ -254,3 +259,9 @@ var prettyTables = {
 
 	},
 }
+
+
+
+
+    
+
