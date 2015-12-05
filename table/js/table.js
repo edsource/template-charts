@@ -28,7 +28,7 @@ var prettyTables = {
 	    }
 	    return val;
 	},
-	getAttr: function(path, contain, sort, search, title, subhed, source, rowName, format, links){
+	getAttr: function(path, contain, sort, search, title, subhed, source, rowName, format, links, truncate){
 		/* DATA PLZ */
 		var p = {
 			data:[],
@@ -43,7 +43,8 @@ var prettyTables = {
 			search:false,
 			rowName:null,
 			format:null,
-			links:null
+			links:null,
+			truncate:null
 		}
 		
 		p.path = path;
@@ -75,6 +76,7 @@ var prettyTables = {
 			p.rowName = rowName;
 			p.format = format;
 			p.links = links;
+			p.truncate = truncate;
 
 			prettyTables.createTable(p);
 		});
@@ -206,7 +208,7 @@ var prettyTables = {
 		======================================*/ 
 		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-meta').append('<h2>'+ p.title +'</h2>');	
 		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-meta').append('<p>'+ p.subhed +'</p>');	
-		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-meta').append('<p><em>'+ p.source +'</em></p>');	
+		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-meta').append('<p><em>Source: '+ p.source +'</em></p>');	
 
 		/* STYLES
 		======================================*/ 	
@@ -229,8 +231,8 @@ var prettyTables = {
 
 		/* FIXED HEADER WIDTH
 		======================================*/
-		if (p.links === 'yes'){var fixedHedWidth = 100 / (p.columns - 1);console.log(fixedHedWidth)}
-		else {var fixedHedWidth = 100 / p.columns;console.log(fixedHedWidth)}
+		if (p.links === 'yes'){var fixedHedWidth = 100 / (p.columns - 1);}
+		else {var fixedHedWidth = 100 / p.columns;}
 
 		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed div').css('width', fixedHedWidth + '%');
 
@@ -253,10 +255,93 @@ var prettyTables = {
 			}
 		});
 
+		/* TRUNCATION
+		======================================*/
+		if (p.truncate != null){
+			//hide all rows past 10th as default
+			jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(10).hide();
 
-		
-		
+			//add navigation buttons
+			jQuery('.pretty-table[data="'+ p.contain +'"]').append('<div class="pretty-table-nav"><p first="1"><a>Previous</a></p><p status="0"><a>Expand Rows</a></p><p last="10"><a>Next</a></p></div>');
 
+			// Next Rows
+			jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').on('click', function(){
+				var last = parseInt(jQuery(this).attr('last')), total = jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').size();
+
+				//show previous
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(0)').css('display', 'inline');
+				
+				//make sure we don't hide all the rows
+				if (total === last){return;}
+				else if ((last+10) > total){
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(last, total).show();
+					jQuery(this).attr('last', total);
+				}
+				else {
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(last, last+10).show();
+					last += 10;
+					jQuery(this).attr('last', last);
+				}		
+
+				//do we need a next?
+				if (total === last){jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').hide();}	
+
+				//update previous data
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(0)').attr('first', last-9);
+
+			});
+
+			// Expand All or Collapse
+			jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(1)').on('click', function(){
+				var status = parseInt(jQuery(this).attr('status'));
+
+				if (status == 0){
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').show();
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(1) a').text('Collapse Rows');
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(0)').attr('first', '1').hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').attr('last', '10').hide();
+					jQuery(this).attr('status', '1');
+				}
+				else if (status == 1){
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(10).hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(1) a').text('Expand Rows');
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').css('display', 'inline');
+					jQuery(this).attr('status', '0');
+				}
+				
+			});
+
+			// Previous Rows
+			jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(0)').on('click', function(){
+				var first = parseInt(jQuery(this).attr('first'));
+
+				//show next
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').css('display', 'inline');
+
+				//make sure we don't hide all the rows
+				if (first == 1){return;}
+				else if ((first-10) < 1){
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(0, 10).show();
+					jQuery(this).attr('first', 1);
+				}
+				else {
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(first-11, first-1).show();
+					first -= 10;
+					jQuery(this).attr('first', first);
+				}		
+
+				//update next data
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').attr('last', first+9);
+
+				//do we need a previous?
+				if (first === 1){jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(0)').hide();}	
+
+			});
+		}	
 	},
 }
 
