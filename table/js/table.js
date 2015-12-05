@@ -257,7 +257,7 @@ var prettyTables = {
 
 		/* TRUNCATION
 		======================================*/
-		if (p.truncate != null){
+		if (p.truncate != null || p.truncate != 'null'){
 			//hide all rows past 10th as default
 			jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(10).hide();
 
