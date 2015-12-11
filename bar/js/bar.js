@@ -155,7 +155,7 @@ var barChart = {
 			else{jQuery(contain + ' #meta').append('<h2 style="color:#fff;">'+p.title+'</h2>');}
 
 			jQuery(contain + ' #meta').append('<p>'+p.subhed+'</p>');
-			jQuery(contain + ' #meta').append('<p>'+p.source+'</p>');
+			jQuery(contain + ' #meta').append('<p>Source: '+p.source+'</p>');
 
 			/* STYLES
 			=================================*/
