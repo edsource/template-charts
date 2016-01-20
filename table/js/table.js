@@ -2,7 +2,6 @@ var prettyTables = {
 	searchTool: function(c){
 		var jQueryrows = jQuery(c + ' tr');
 		var allRows = jQuery(c + ' tr:not('+ c +' thead tr)');
-		console.log(c)
 
 		/* SEARCH STRING
 		======================================*/    
@@ -28,7 +27,7 @@ var prettyTables = {
 	    }
 	    return val;
 	},
-	getAttr: function(path, contain, sort, search, title, subhed, source, rowName, format, links, truncate){
+	getAttr: function(path, contain, sort, search, title, subhed, source, rowName, format, links, truncate, align){
 		/* DATA PLZ */
 		var p = {
 			data:[],
@@ -44,7 +43,8 @@ var prettyTables = {
 			rowName:null,
 			format:null,
 			links:null,
-			truncate:null
+			truncate:null,
+			align:null
 		}
 		
 		p.path = path;
@@ -77,7 +77,7 @@ var prettyTables = {
 			p.format = format;
 			p.links = links;
 			p.truncate = truncate;
-
+			p.align = parseInt(align);
 			prettyTables.createTable(p);
 		});
 
@@ -113,7 +113,7 @@ var prettyTables = {
 					else {
 						th.appendChild(document.createTextNode(p.data[0][j]));
 					}
-
+					if (p.align == j || p.align == 0){th.style.textAlign = 'left';}
 					frag3.appendChild(th);
 				}
 				tr.appendChild(frag3);
@@ -152,20 +152,19 @@ var prettyTables = {
 					else {					
 						if (p.format === '%'){
 							var item = Math.round(parseFloat(p.data[i][j]) * 100) + '%';
-							td.appendChild(document.createTextNode(item));
 						}
 						else if (p.format === '#'){
 							var item = parseInt(p.data[i][j]);
-							td.appendChild(document.createTextNode(item));
 						}
 						else if (p.format === '$'){
 							var item = '$' + prettyTables.commaSeparateNumber(parseInt(p.data[i][j]));
-							td.appendChild(document.createTextNode(item));
 						}
 						else if (p.format === 'txt'){
 							var item = p.data[i][j];
-							td.appendChild(document.createTextNode(item));
+							
 						}
+						if (p.align == j || p.align == 0){td.style.textAlign = 'left';}
+						td.appendChild(document.createTextNode(item));
 					}
 					frag2.appendChild(td);
 					
@@ -201,6 +200,7 @@ var prettyTables = {
 			jQuery('#reset-search').on('click', function(){
 			    jQuery('tr').css('display','table-row');
 			    jQuery('#pretty-table-search').val('');
+			    jQuery('.pretty-table tbody tr').slice(10).hide();
 			})
 	   }
 
