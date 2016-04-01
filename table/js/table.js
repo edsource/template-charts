@@ -35,7 +35,7 @@ var prettyTables = {
 			columns:null,
 			contain:null,
 			path:null,
-			sort:[0,0],
+			sort:null,
 			title:null,
 			subhed:null,
 			source:null,
@@ -46,7 +46,6 @@ var prettyTables = {
 			truncate:null,
 			align:null
 		}
-		
 		p.path = path;
 
 		/* GRAB DATA AND SET ATTRS
@@ -60,11 +59,14 @@ var prettyTables = {
 			p.rows = p.data.length;
 			p.columns = p.data[0].length;
 
+			console.log(sort)
 			/* Sorting Default
 			---------------------------------*/
-			var s = sort.split(',');
-			p.sort[0] = s[0];
-			p.sort[1] = s[1];
+			if (sort != ''){
+				var s = sort.split(',');
+				p.sort[0] = s[0];
+				p.sort[1] = s[1];
+			}
 
 			/* Attrs
 			---------------------------------*/
@@ -114,6 +116,7 @@ var prettyTables = {
 						th.appendChild(document.createTextNode(p.data[0][j]));
 					}
 					if (p.align == j || p.align == 0){th.style.textAlign = 'left';}
+					th.className = 'header';
 					frag3.appendChild(th);
 				}
 				tr.appendChild(frag3);
@@ -126,7 +129,7 @@ var prettyTables = {
 
 					/* Check if links, + means skip last column
 					----------------------------------------------*/
-					if (p.links === 'yes' && j == p.columns - 1){console.log(p.columns - 1);break;}
+					if (p.links === 'yes' && j == p.columns - 1){break;}
 					
 					/* Build cell */
 					td = document.createElement('td');
@@ -185,7 +188,8 @@ var prettyTables = {
 
 		/* CONFIGURE TABLESORTER
 		======================================*/ 
-		jQuery(p.contain + ' table').tablesorter({sortList:[[p.sort[0],p.sort[1]]]});
+		if (p.sort != null){jQuery(p.contain + ' table').tablesorter({sortList:[[p.sort[0],p.sort[1]]]});}
+		else {jQuery(p.contain + ' table thead tr .header').css('background-image','none')}
 
 		/* SEARCH COMMANDS
 		======================================*/    
@@ -257,12 +261,12 @@ var prettyTables = {
 
 		/* TRUNCATION
 		======================================*/
-		if (p.truncate != null || p.truncate != 'null'){
+		if (p.truncate === 'True' || p.truncate === 'true' || p.truncate === 'yes' || p.truncate === 'Yes'){
 			//hide all rows past 10th as default
 			jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(10).hide();
 
 			//add navigation buttons
-			jQuery('.pretty-table[data="'+ p.contain +'"]').append('<div class="pretty-table-nav"><p first="1"><a>Previous</a></p><p status="0"><a>Expand Rows</a></p><p last="10"><a>Next</a></p></div>');
+			jQuery('.pretty-table[data="'+ p.contain +'"]').append('<div class="pretty-table-nav"><p first="1"><a>Previous Rows</a></p><p status="0"><a>Show All</a></p><p last="10"><a>Next Rows</a></p></div>');
 
 			// Next Rows
 			jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').on('click', function(){
@@ -299,14 +303,14 @@ var prettyTables = {
 
 				if (status == 0){
 					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').show();
-					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(1) a').text('Collapse Rows');
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(1) a').text('Show 10 Rows');
 					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(0)').attr('first', '1').hide();
 					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').attr('last', '10').hide();
 					jQuery(this).attr('status', '1');
 				}
 				else if (status == 1){
 					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(10).hide();
-					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(1) a').text('Expand Rows');
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(1) a').text('Show All');
 					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').css('display', 'inline');
 					jQuery(this).attr('status', '0');
 				}
