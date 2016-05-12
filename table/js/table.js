@@ -64,8 +64,8 @@ var prettyTables = {
 			---------------------------------*/
 			if (sort != ''){
 				var s = sort.split(',');
-				p.sort[0] = s[0];
-				p.sort[1] = s[1];
+				p.sort[0] = parseInt(s[0]);
+				p.sort[1] = parseInt(s[1]);
 			}
 
 			/* Attrs
