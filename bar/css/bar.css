@@ -2,6 +2,8 @@
 .s_c_p .tick text {font-size:.7em;font-family:helvetica,san-serif;fill:#333;}
 .s_c_p rect {cursor:pointer;}
 
+.temp-charts[role="bar"] p {font-family: 'roboto condensed', san-serif;font-size:1rem;}
+
 /* D3 TIP
 ==========================================*/
 .d3-tip {  line-height: 1;  font-weight: bold;  padding: 12px;  background: rgba(0, 0, 0, 0.8);  color: #fff;  border-radius: 2px;}

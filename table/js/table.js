@@ -2,7 +2,6 @@ var prettyTables = {
 	searchTool: function(c){
 		var jQueryrows = jQuery(c + ' tr');
 		var allRows = jQuery(c + ' tr:not('+ c +' thead tr)');
-		console.log(c)
 
 		/* SEARCH STRING
 		======================================*/    
@@ -28,7 +27,7 @@ var prettyTables = {
 	    }
 	    return val;
 	},
-	getAttr: function(path, contain, sort, search, title, subhed, source, rowName, format, links){
+	getAttr: function(path, contain, sort, search, title, subhed, source, rowName, format, links, truncate, align){
 		/* DATA PLZ */
 		var p = {
 			data:[],
@@ -36,16 +35,17 @@ var prettyTables = {
 			columns:null,
 			contain:null,
 			path:null,
-			sort:[0,0],
+			sort:null,
 			title:null,
 			subhed:null,
 			source:null,
 			search:false,
 			rowName:null,
 			format:null,
-			links:null
+			links:null,
+			truncate:null,
+			align:null
 		}
-		
 		p.path = path;
 
 		/* GRAB DATA AND SET ATTRS
@@ -59,11 +59,14 @@ var prettyTables = {
 			p.rows = p.data.length;
 			p.columns = p.data[0].length;
 
+			console.log(sort)
 			/* Sorting Default
 			---------------------------------*/
-			var s = sort.split(',');
-			p.sort[0] = s[0];
-			p.sort[1] = s[1];
+			if (sort != ''){
+				var s = sort.split(',');
+				p.sort[0] = parseInt(s[0]);
+				p.sort[1] = parseInt(s[1]);
+			}
 
 			/* Attrs
 			---------------------------------*/
@@ -75,7 +78,8 @@ var prettyTables = {
 			p.rowName = rowName;
 			p.format = format;
 			p.links = links;
-
+			p.truncate = truncate;
+			p.align = parseInt(align);
 			prettyTables.createTable(p);
 		});
 
@@ -111,7 +115,8 @@ var prettyTables = {
 					else {
 						th.appendChild(document.createTextNode(p.data[0][j]));
 					}
-
+					if (p.align == j || p.align == 0){th.style.textAlign = 'left';}
+					th.className = 'header';
 					frag3.appendChild(th);
 				}
 				tr.appendChild(frag3);
@@ -124,7 +129,7 @@ var prettyTables = {
 
 					/* Check if links, + means skip last column
 					----------------------------------------------*/
-					if (p.links === 'yes' && j == p.columns - 1){console.log(p.columns - 1);break;}
+					if (p.links === 'yes' && j == p.columns - 1){break;}
 					
 					/* Build cell */
 					td = document.createElement('td');
@@ -150,20 +155,19 @@ var prettyTables = {
 					else {					
 						if (p.format === '%'){
 							var item = Math.round(parseFloat(p.data[i][j]) * 100) + '%';
-							td.appendChild(document.createTextNode(item));
 						}
 						else if (p.format === '#'){
 							var item = parseInt(p.data[i][j]);
-							td.appendChild(document.createTextNode(item));
 						}
 						else if (p.format === '$'){
 							var item = '$' + prettyTables.commaSeparateNumber(parseInt(p.data[i][j]));
-							td.appendChild(document.createTextNode(item));
 						}
 						else if (p.format === 'txt'){
 							var item = p.data[i][j];
-							td.appendChild(document.createTextNode(item));
+							
 						}
+						if (p.align == j || p.align == 0){td.style.textAlign = 'left';}
+						td.appendChild(document.createTextNode(item));
 					}
 					frag2.appendChild(td);
 					
@@ -184,7 +188,8 @@ var prettyTables = {
 
 		/* CONFIGURE TABLESORTER
 		======================================*/ 
-		jQuery(p.contain + ' table').tablesorter({sortList:[[p.sort[0],p.sort[1]]]});
+		if (p.sort != null){jQuery(p.contain + ' table').tablesorter({sortList:[[p.sort[0],p.sort[1]]]});}
+		else {jQuery(p.contain + ' table thead tr .header').css('background-image','none')}
 
 		/* SEARCH COMMANDS
 		======================================*/    
@@ -199,6 +204,7 @@ var prettyTables = {
 			jQuery('#reset-search').on('click', function(){
 			    jQuery('tr').css('display','table-row');
 			    jQuery('#pretty-table-search').val('');
+			    jQuery('.pretty-table tbody tr').slice(10).hide();
 			})
 	   }
 
@@ -206,7 +212,7 @@ var prettyTables = {
 		======================================*/ 
 		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-meta').append('<h2>'+ p.title +'</h2>');	
 		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-meta').append('<p>'+ p.subhed +'</p>');	
-		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-meta').append('<p><em>'+ p.source +'</em></p>');	
+		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-meta').append('<p><em>Source: '+ p.source +'</em></p>');	
 
 		/* STYLES
 		======================================*/ 	
@@ -229,8 +235,8 @@ var prettyTables = {
 
 		/* FIXED HEADER WIDTH
 		======================================*/
-		if (p.links === 'yes'){var fixedHedWidth = 100 / (p.columns - 1);console.log(fixedHedWidth)}
-		else {var fixedHedWidth = 100 / p.columns;console.log(fixedHedWidth)}
+		if (p.links === 'yes'){var fixedHedWidth = 100 / (p.columns - 1);}
+		else {var fixedHedWidth = 100 / p.columns;}
 
 		jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-fixed div').css('width', fixedHedWidth + '%');
 
@@ -253,10 +259,93 @@ var prettyTables = {
 			}
 		});
 
+		/* TRUNCATION
+		======================================*/
+		if (p.truncate === 'True' || p.truncate === 'true' || p.truncate === 'yes' || p.truncate === 'Yes'){
+			//hide all rows past 10th as default
+			jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(10).hide();
 
-		
-		
+			//add navigation buttons
+			jQuery('.pretty-table[data="'+ p.contain +'"]').append('<div class="pretty-table-nav"><p first="1"><a>Previous Rows</a></p><p status="0"><a>Show All</a></p><p last="10"><a>Next Rows</a></p></div>');
 
+			// Next Rows
+			jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').on('click', function(){
+				var last = parseInt(jQuery(this).attr('last')), total = jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').size();
+
+				//show previous
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(0)').css('display', 'inline');
+				
+				//make sure we don't hide all the rows
+				if (total === last){return;}
+				else if ((last+10) > total){
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(last, total).show();
+					jQuery(this).attr('last', total);
+				}
+				else {
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(last, last+10).show();
+					last += 10;
+					jQuery(this).attr('last', last);
+				}		
+
+				//do we need a next?
+				if (total === last){jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').hide();}	
+
+				//update previous data
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(0)').attr('first', last-9);
+
+			});
+
+			// Expand All or Collapse
+			jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(1)').on('click', function(){
+				var status = parseInt(jQuery(this).attr('status'));
+
+				if (status == 0){
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').show();
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(1) a').text('Show 10 Rows');
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(0)').attr('first', '1').hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').attr('last', '10').hide();
+					jQuery(this).attr('status', '1');
+				}
+				else if (status == 1){
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(10).hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(1) a').text('Show All');
+					jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').css('display', 'inline');
+					jQuery(this).attr('status', '0');
+				}
+				
+			});
+
+			// Previous Rows
+			jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(0)').on('click', function(){
+				var first = parseInt(jQuery(this).attr('first'));
+
+				//show next
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').css('display', 'inline');
+
+				//make sure we don't hide all the rows
+				if (first == 1){return;}
+				else if ((first-10) < 1){
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(0, 10).show();
+					jQuery(this).attr('first', 1);
+				}
+				else {
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').hide();
+					jQuery('.pretty-table[data="'+ p.contain +'"] tbody tr').slice(first-11, first-1).show();
+					first -= 10;
+					jQuery(this).attr('first', first);
+				}		
+
+				//update next data
+				jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(2)').attr('last', first+9);
+
+				//do we need a previous?
+				if (first === 1){jQuery('.pretty-table[data="'+ p.contain +'"] .pretty-table-nav p:eq(0)').hide();}	
+
+			});
+		}	
 	},
 }
 

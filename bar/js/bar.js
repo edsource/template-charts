@@ -1,5 +1,5 @@
 var barChart = {
-	getAttr: function(type, path, contain, w, h, m, color, sort, xlabel, ylabel, tF, tick, pad, title, subhed, source, max){
+	getAttr: function(type, path, contain, w, h, m, color, sort, xlabel, ylabel, tF, tick, pad, title, subhed, source, max, classes){
 		var p = {
 			label:[],
 			data:[],
@@ -19,12 +19,13 @@ var barChart = {
 			subhed:null,
 			source:null,
 			type:null,
-			max: null
+			max: null,
+			classes:null
 		}
 		p.type = type;
 
-		p.w = parseInt(w)// - m[1] - m[3];
-		p.h = parseInt(h)// - m[0] - m[2];
+		p.w = parseInt(w);
+		p.h = parseInt(h);
 		p.m = {
 			top:m[0],
 			right:m[1],
@@ -56,6 +57,8 @@ var barChart = {
 		p.subhed = subhed;
 		p.source = source;
 
+		p.classes = classes.split(' ');
+
 		barChart.drawChart(p);
 	},
 	commaSeparateNumber:function(val){
@@ -69,7 +72,7 @@ var barChart = {
 
 		/* SCALE
 		==========================*/
-		var xScale = d3.scale.ordinal().rangeRoundBands([0, p.w - (p.m.left - 10)], p.padding);
+		var xScale = d3.scale.ordinal().rangeRoundBands([0, p.w - (p.m.left + p.m.right)], p.padding);
 		var yScale = d3.scale.linear().rangeRound([p.h, 0]);
 
 		/* AXES
@@ -92,7 +95,6 @@ var barChart = {
 			/* MAPS POS	
 			====================================*/
 			xScale.domain(data.map(function(d){ return d.xlabel;}));
-			
 			if (p.max == null){
 				yScale.domain([0, d3.max(data, function(d) {
 					if (p.tickFormat === "$" || p.tickFormat === ",g"){
@@ -117,7 +119,7 @@ var barChart = {
 			====================================*/
 			chart.append('g').attr('class', 'xaxis').attr('transform', 'translate(0,' + p.h + ')').call(xAxis)
 				.selectAll(".tick text").call(barChart.wrapLabels, xScale.rangeBand());
-			chart.append('g').attr('class', 'yaxis').call(yAxis);
+			chart.append('g').attr('transform','translate(0,0)').attr('class', 'yaxis').call(yAxis);
 
 			/* TOOLTIP
 			====================================*/
@@ -148,9 +150,12 @@ var barChart = {
 			/* ADD META DETAILS
 			=================================*/
 			jQuery(contain).prepend('<div id="meta"></div>');
-			jQuery(contain + ' #meta').append('<h2>'+p.title+'</h2>');
+
+			if(p.title !== 'XXX'){jQuery(contain + ' #meta').append('<h2>'+p.title+'</h2>');}
+			else{jQuery(contain + ' #meta').append('<h2 style="color:#fff;">'+p.title+'</h2>');}
+
 			jQuery(contain + ' #meta').append('<p>'+p.subhed+'</p>');
-			jQuery(contain + ' #meta').append('<p>'+p.source+'</p>');
+			jQuery(contain + ' #meta').append('<p>Source: '+p.source+'</p>');
 
 			/* STYLES
 			=================================*/
@@ -160,7 +165,10 @@ var barChart = {
 			jQuery(contain + ' #meta p:eq(0)').css({'margin':0});
 			jQuery(contain + ' #meta p:eq(1)').css({'font-style':'italic', 'font-size':'.9em','margin-top':'5px'});
 
-			
+			/* ADD SPECIAL CLASSES
+			=================================*/
+			for (var i=0 ; i < p.classes.length ; i++){jQuery(contain).addClass(p.classes[i]);}
+
 		});
 	},
 	wrapLabels: function(text, width){
